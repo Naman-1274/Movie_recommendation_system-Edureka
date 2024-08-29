@@ -49,3 +49,4 @@ if st.button("Recommend"):
         with columns[j]:
             st.image(posters[j], use_column_width=True)
             st.text(names[j])
+
