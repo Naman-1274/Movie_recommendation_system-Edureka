@@ -3,13 +3,13 @@ import pickle
 import pandas as pd
 import requests
 
-
+# Function to fetch movie poster
 def poster_fetcher(movie_id):
     response = requests.get(f'https://api.themoviedb.org/3/movie/{movie_id}?api_key=57f88c1a1943f0c140138e8d0db192a7')
     data = response.json()
     return "https://image.tmdb.org/t/p/w500/" + data['poster_path']
 
-
+# Function to recommend movies based on similarity
 def content_recommend(movie):
     idx = movies[movies['title'] == movie].index[0]
     distance = similarity[idx]
@@ -27,20 +27,39 @@ def content_recommend(movie):
 
     return recommended_movies, recommended_movies_poster
 
-
+# Load data
 movie_dict = pickle.load(open('data_dict.pkl', 'rb'))
 movies = pd.DataFrame(movie_dict)
-
 similarity = pickle.load(open('temp_similarity.pkl', 'rb'))
 
+# Set page configuration
+st.set_page_config(page_title="Movie Recommender System", layout="wide")
 
-st.title('Movie Recommender System')
+# Add a background image
+st.markdown(
+    """
+    <style>
+    .stApp {
+        background-image: url("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQkATan6TmhL7FOhQtzlIyKhFm3MUb-xM7kbQ&s");
+        background-size: cover;
+        background-position: center;
+        color: white;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
 
+# Title of the app
+st.title('🎬 Movie Recommender System 🎬')
+
+# Movie selection dropdown
 Selected_Movie_Name = st.selectbox(
-    "How would you like to be contacted?",
+    "Select a movie to get recommendations:",
     movies['title'].values
 )
 
+# Recommend button
 if st.button("Recommend"):
     names, posters = content_recommend(Selected_Movie_Name)
     columns = st.columns(len(names))
@@ -50,3 +69,15 @@ if st.button("Recommend"):
             st.image(posters[j], use_column_width=True)
             st.text(names[j])
 
+# Footer
+st.markdown(
+    """
+    <style>
+    footer {
+        visibility: hidden;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+st.markdown("Made with ❤️ by Your Naman")
